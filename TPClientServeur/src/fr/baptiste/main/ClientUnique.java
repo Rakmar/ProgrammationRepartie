@@ -20,14 +20,12 @@ public class ClientUnique implements Runnable {
 	private static int count = 0;
 	private String name = "Client-";
 
-	
-	private ArrayList<Long> tableResponse= null;
+	private ArrayList<Long> tableResponse = null;
 	private ArrayList<Socket> connexions = null;
-	
-	
+
 	long total = 0;
 	int totalCount = 0;
-	
+
 	int numWorkers = 16000000;
 
 	public ClientUnique(List<String> hosts, List<Integer> ports) {
@@ -69,17 +67,17 @@ public class ClientUnique implements Runnable {
 
 				// On attend la réponse
 				String response = read();
-				
+
 				tableResponse.add(Long.parseLong(response));
 				total += Long.parseLong(response);
-							
+
 				System.out.println(tableResponse);
 				writer.write("CLOSE");
 				writer.flush();
 				writer.close();
 			}
 			double pi = 4.0 * total / totalCount / numWorkers;
-			System.out.println("PI : "+pi);
+			System.out.println("PI : " + pi);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -89,8 +87,6 @@ public class ClientUnique implements Runnable {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
-		
 
 	}
 
@@ -108,5 +104,17 @@ public class ClientUnique implements Runnable {
 		stream = reader.read(b);
 		response = new String(b, 0, stream);
 		return response;
+	}
+
+	public static void main(String[] args) {
+		String host = "127.0.0.1";
+		ArrayList<String> hosts = new ArrayList<String>();
+		ArrayList<Integer> ports = new ArrayList<Integer>();
+		for (int i = 5000; i < 5010; i++) {
+			hosts.add(host);
+			ports.add(i);
+		}
+		Thread th = new Thread(new ClientUnique(hosts, ports));
+		th.start();
 	}
 }
